@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -20,6 +22,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,12 +32,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.flightsearch.data.AppDataContainer
+import com.example.flightsearch.ui.AppViewModelProvider
 import com.example.flightsearch.ui.theme.FlightSearchTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
-    var textFieldValue by remember { mutableStateOf<String>("") }
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    viewModel: AirportViewModel = viewModel(factory = AppViewModelProvider.Factory)
+) {
+    val uiState by viewModel.uiState.collectAsState()
+
     Scaffold(topBar = {
         TopAppBar(
             title = {
@@ -48,8 +58,8 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 .fillMaxSize()
         ) {
             TextField(
-                value = "",
-                onValueChange = {},
+                value = uiState.searchInput,
+                onValueChange = { viewModel.updateUserInput(it) },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -67,6 +77,14 @@ fun HomeScreen(modifier: Modifier = Modifier) {
                 )
 
             )
+
+            LazyColumn(modifier = Modifier.padding(horizontal = 18.dp)) {
+                items(uiState.airportList) { airport ->
+                    Card {
+                        Text(text = airport.name)
+                    }
+                }
+            }
 
         }
     }
