@@ -5,12 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.example.flightsearch.model.Airport
 import com.example.flightsearch.data.AirportRepository
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -23,7 +19,7 @@ class AirportViewModel(
     val uiState: StateFlow<AirportUiState> = _uiState.asStateFlow()
 
     init {
-        getAllFlights()
+        getFlightBySearch(input = uiState.value.searchInput)
     }
 
     fun getAllFlights() {
@@ -34,6 +30,13 @@ class AirportViewModel(
         }
     }
 
+    fun getFlightBySearch(input: String) {
+        viewModelScope.launch {
+            airportRepository.getFlightBySearch("%$input%").collect { flights ->
+                _uiState.update { it.copy(airportList = flights) }
+            }
+        }
+    }
 
 //    val airportAllFlights: StateFlow<AirportUiState> =
 //        airportRepository.getAllFlights()
