@@ -1,8 +1,8 @@
 package com.example.flightsearch.data
 
 import android.content.Context
-import com.example.flightsearch.data.local.LocalAirportDataRepository
-import com.example.flightsearch.data.local.LocalFavoriteDataRepository
+import com.example.flightsearch.data.local.LocalAirportData
+import com.example.flightsearch.data.local.LocalFavoriteData
 
 interface AppContainer {
     val airportRepository: AirportRepository
@@ -11,10 +11,10 @@ interface AppContainer {
 
 class AppDataContainer(private val context: Context) : AppContainer {
     override val airportRepository: AirportRepository by lazy {
-        LocalAirportDataRepository(AppDatabase.getDatabase(context).airportDao())
+        LocalAirportData(AppDatabase.getDatabase(context).airportDao())
     }
 
     override val favoriteRepository: FavoriteRepository by lazy {
-        LocalFavoriteDataRepository(AppDatabase.getDatabase(context).favoriteDao())
+        LocalFavoriteData(AppDatabase.getDatabase(context).favoriteDao())
     }
 }
