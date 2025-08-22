@@ -6,7 +6,7 @@ import com.example.flightsearch.data.FavoriteDao
 import com.example.flightsearch.data.FavoriteRepository
 import kotlinx.coroutines.flow.Flow
 
-class LocalFavoriteDataRepository(private val favoriteDao: FavoriteDao) : FavoriteRepository {
+class LocalFavoriteData(private val favoriteDao: FavoriteDao) : FavoriteRepository {
     override fun getAllFavorites(): Flow<List<Favorite>> = favoriteDao.getAllFavorites()
 
     override suspend fun setFavoriteFlight(airport: Airport) =
