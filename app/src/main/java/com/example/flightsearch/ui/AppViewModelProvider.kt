@@ -12,6 +12,7 @@ object AppViewModelProvider {
         initializer {
             AirportViewModel(
                 airportRepository = flightSearchApplication().container.airportRepository,
+                userPreferencesRepository = flightSearchApplication().userPreferencesRepository
             )
         }
     }
@@ -19,3 +20,4 @@ object AppViewModelProvider {
 
 fun CreationExtras.flightSearchApplication(): FlightSearchApplication =
     (this[ViewModelProvider.AndroidViewModelFactory.APPLICATION_KEY] as FlightSearchApplication)
+
