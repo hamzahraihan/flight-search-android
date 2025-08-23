@@ -17,16 +17,17 @@ class UserPreferencesRepository(private val dataStore: DataStore<Preferences>) {
         const val TAG = "UserPreferencesRepo"
     }
 
-    val searchInput: Flow<String> = dataStore.data.catch {
-        if (it is IOException) {
-            Log.e(TAG, "Error reading preferences.", it)
-            emit(emptyPreferences())
-        } else {
-            throw it
+    val searchInput: Flow<String> = dataStore.data
+        .catch {
+            if (it is IOException) {
+                Log.e(TAG, "Error reading preferences.", it)
+                emit(emptyPreferences())
+            } else {
+                throw it
+            }
+        }.map { preferences ->
+            preferences[SEARCH_INPUT] ?: ""
         }
-    }.map { preferences ->
-        preferences[SEARCH_INPUT] ?: ""
-    }
 
 
     suspend fun saveSearchInput(searchInput: String) {
