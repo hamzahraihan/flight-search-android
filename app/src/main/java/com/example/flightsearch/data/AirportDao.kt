@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface AirportDao {
     @Query(
         """
-        SELECT * from airport WHERE iata_code = :search AND name = :search ORDER BY passengers ASC
+        SELECT * from airport WHERE iata_code LIKE :search OR name LIKE :search 
     """
     )
     fun getFlightBySearch(search: String): Flow<List<Airport>>
