@@ -59,7 +59,9 @@ fun HomeScreen(
         ) {
             TextField(
                 value = uiState.searchInput,
-                onValueChange = { viewModel.updateUserInput(it) },
+                onValueChange = { newValue ->
+                    viewModel.updateUserInput(newValue)
+                },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.Search,
@@ -78,14 +80,15 @@ fun HomeScreen(
 
             )
 
-            LazyColumn(modifier = Modifier.padding(horizontal = 18.dp)) {
-                items(uiState.airportList) { airport ->
-                    Card {
-                        Text(text = airport.name)
+            if (uiState.searchInput != "") {
+                LazyColumn(modifier = Modifier.padding(horizontal = 18.dp)) {
+                    items(uiState.airportList) { airport ->
+                        Card {
+                            Text(text = airport.name)
+                        }
                     }
                 }
             }
-
         }
     }
 }
