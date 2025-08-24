@@ -7,5 +7,7 @@ interface AirportRepository {
 
     fun getFlightBySearch(search: String): Flow<List<Airport>>
 
+    fun getFlightByCode(iataCode: String): Flow<List<Airport>>
+
     fun getAllFlights(): Flow<List<Airport>>
 }
