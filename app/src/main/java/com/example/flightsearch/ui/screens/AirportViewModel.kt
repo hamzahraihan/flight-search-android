@@ -7,18 +7,14 @@ import com.example.flightsearch.model.Airport
 import com.example.flightsearch.data.AirportRepository
 import com.example.flightsearch.data.UserPreferencesRepository
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 @OptIn(FlowPreview::class)
 class AirportViewModel(
@@ -36,7 +32,7 @@ class AirportViewModel(
                 .collectLatest { input ->
                     if (_uiState.value.searchInput.isEmpty()) {
                         _uiState.update { it.copy(searchInput = input) }
-                        getFlightBySearch(input = input)
+                        getSearchAutocomplete(input = input)
                     }
                 }
         }
@@ -52,28 +48,40 @@ class AirportViewModel(
 
 
     fun updateUserInput(input: String) {
+        if (input.isEmpty() || input == "") {
+            _uiState.update { it.copy(currentAirports = emptyList()) }
+        }
+
         _uiState.update { it.copy(searchInput = input) }
 
-        getFlightBySearch(input)
+        getSearchAutocomplete(input)
+
 
         viewModelScope.launch {
             userPreferencesRepository.saveSearchInput(input)
         }
     }
 
+
     private fun getSearchAutocomplete(input: String) {
         viewModelScope.launch {
-            airportRepository.getFlightBySearch("%$input%").filterNotNull().collect { airports ->
+            airportRepository.getFlightBySearch("%$input%").filterNotNull().collect { suggestion ->
                 _uiState.update {
-                    Log.e("FROM DATABASE", airports.toString())
-                    it.copy(airportList = airports)
+                    Log.e("FROM DATABASE", suggestion.toString())
+                    it.copy(suggestedAirport = suggestion)
                 }
             }
         }
     }
 
-    private fun getFlightBySearch(input: String) {
+    fun updateCurrentAirport(iataCode: String) {
         viewModelScope.launch {
+            airportRepository.getFlightByCode(iataCode = iataCode).filterNotNull()
+                .collect { airports ->
+                    _uiState.update {
+                        it.copy(currentAirports = airports)
+                    }
+                }
         }
     }
 
@@ -93,5 +101,7 @@ class AirportViewModel(
 }
 
 data class AirportUiState(
-    val searchInput: String = "", val airportList: List<Airport> = emptyList()
+    val searchInput: String = "",
+    val suggestedAirport: List<Airport> = emptyList(),
+    val currentAirports: List<Airport> = emptyList()
 )
