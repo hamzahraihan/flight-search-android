@@ -1,6 +1,7 @@
 package com.example.flightsearch.ui.screens
 
 import android.view.RoundedCorner
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -41,9 +42,10 @@ import com.example.flightsearch.ui.theme.FlightSearchTheme
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
-    viewModel: AirportViewModel = viewModel(factory = AppViewModelProvider.Factory)
+    airportViewModel: AirportViewModel = viewModel(factory = AppViewModelProvider.Factory),
+    favoriteViewModel: FavoriteViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+    val airportUiState by airportViewModel.uiState.collectAsState()
 
     Scaffold(topBar = {
         TopAppBar(
@@ -57,10 +59,11 @@ fun HomeScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
+
             TextField(
-                value = uiState.searchInput,
+                value = airportUiState.searchInput,
                 onValueChange = { newValue ->
-                    viewModel.updateUserInput(newValue)
+                    airportViewModel.updateUserInput(newValue)
                 },
                 leadingIcon = {
                     Icon(
@@ -77,17 +80,17 @@ fun HomeScreen(
                     unfocusedIndicatorColor = Color.Transparent,
                     disabledIndicatorColor = Color.Transparent
                 )
-
             )
 
-            if (uiState.searchInput != "") {
-                LazyColumn(modifier = Modifier.padding(horizontal = 18.dp)) {
-                    items(uiState.airportList) { airport ->
-                        Card {
-                            Text(text = airport.name)
-                        }
-                    }
-                }
+            if (airportUiState.searchInput.isNotEmpty()) {
+                SearchResultScreen(
+                    viewModel = airportViewModel,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
+            }
+
+            if (airportUiState.searchInput.isEmpty() || airportUiState.currentAirports.isEmpty()) {
+                FavoriteScreen(viewModel = favoriteViewModel, modifier = Modifier.padding(12.dp))
             }
         }
     }
