@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.flightsearch.FlightSearchApplication
 import com.example.flightsearch.ui.screens.AirportViewModel
+import com.example.flightsearch.ui.screens.FavoriteViewModel
 
 object AppViewModelProvider {
     val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -13,6 +14,12 @@ object AppViewModelProvider {
             AirportViewModel(
                 airportRepository = flightSearchApplication().container.airportRepository,
                 userPreferencesRepository = flightSearchApplication().userPreferencesRepository
+            )
+        }
+
+        initializer {
+            FavoriteViewModel(
+                favoriteRepository = flightSearchApplication().container.favoriteRepository
             )
         }
     }
