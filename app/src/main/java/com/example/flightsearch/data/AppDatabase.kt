@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.example.flightsearch.model.Airport
 import com.example.flightsearch.model.Favorite
 
-@Database(entities = [Airport::class, Favorite::class], version = 1)
+@Database(entities = [Airport::class, Favorite::class], version = 1, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun airportDao(): AirportDao
     abstract fun favoriteDao(): FavoriteDao
@@ -18,7 +18,7 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): AppDatabase {
             return Instance ?: synchronized(this) {
-                Room.databaseBuilder(context, AppDatabase::class.java, "flight_search.db")
+                Room.databaseBuilder(context, AppDatabase::class.java, "flight_search")
                     .createFromAsset("database/flight_search.db")
                     .build().also { Instance = it }
             }
