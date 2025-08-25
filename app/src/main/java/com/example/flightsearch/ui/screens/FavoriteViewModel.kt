@@ -29,6 +29,10 @@ class FavoriteViewModel(private val favoriteRepository: FavoriteRepository) : Vi
             }
         }
     }
+
+    suspend fun setFavoriteFligth(airport: Airport) {
+        favoriteRepository.setFavoriteFlight(airport = airport)
+    }
 }
 
 data class FavoriteUiState(
