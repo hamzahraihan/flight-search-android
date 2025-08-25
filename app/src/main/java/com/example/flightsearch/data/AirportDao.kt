@@ -19,12 +19,12 @@ interface AirportDao {
             SELECT * from airport WHERE iata_code = :iataCode ORDER BY passengers ASC 
         """
     )
-    fun getFlightByCode(iataCode: String): Flow<List<Airport>>
+    fun getFlightByCode(iataCode: String): Flow<Airport>
 
     @Query(
         """
-        SELECT * from airport ORDER BY passengers ASC
+        SELECT * from airport WHERE iata_code != :iataCode ORDER BY passengers ASC
     """
     )
-    fun getAllFlights(): Flow<List<Airport>>
+    fun getAllFlightsWithDestination(iataCode: String): Flow<List<Airport>>
 }
