@@ -9,9 +9,10 @@ class LocalAirportData(private val airportDao: AirportDao) : AirportRepository {
     override fun getFlightBySearch(search: String): Flow<List<Airport>> =
         airportDao.getFlightBySearch(search)
 
-    override fun getFlightByCode(iataCode: String): Flow<List<Airport>> =
+    override fun getFlightByCode(iataCode: String): Flow<Airport> =
         airportDao.getFlightByCode(iataCode)
 
-    override fun getAllFlights(): Flow<List<Airport>> = airportDao.getAllFlights()
+    override fun getAllFlightsWithDestination(iataCode: String): Flow<List<Airport>> =
+        airportDao.getAllFlightsWithDestination(iataCode)
 
 }
