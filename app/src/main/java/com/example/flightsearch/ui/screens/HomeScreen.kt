@@ -82,15 +82,19 @@ fun HomeScreen(
                 )
             )
 
-            if (airportUiState.searchInput.isNotEmpty()) {
+            if (airportUiState.searchInput.isNotEmpty() && airportUiState.currentAirport == null) {
                 SearchResultScreen(
                     viewModel = airportViewModel,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
 
-            if (airportUiState.searchInput.isEmpty() || airportUiState.currentAirports.isEmpty()) {
+            if (airportUiState.searchInput.isEmpty() && airportUiState.currentAirport == null) {
                 FavoriteScreen(viewModel = favoriteViewModel, modifier = Modifier.padding(12.dp))
+            }
+
+            if (airportUiState.currentAirport != null) {
+                AirportScreen(uiState = airportUiState, modifier = Modifier.fillMaxSize())
             }
         }
     }
