@@ -23,7 +23,6 @@ class AirportViewModel(
 ) : ViewModel() {
     private var _uiState = MutableStateFlow(AirportUiState())
 
-
     val uiState: StateFlow<AirportUiState> = _uiState.asStateFlow()
 
     init {
@@ -49,7 +48,7 @@ class AirportViewModel(
 
     fun updateUserInput(input: String) {
         if (input.isEmpty() || input == "") {
-            _uiState.update { it.copy(currentAirports = emptyList()) }
+            _uiState.update { it.copy(currentAirport = null) }
         }
 
         _uiState.update { it.copy(searchInput = input) }
@@ -76,10 +75,23 @@ class AirportViewModel(
 
     fun updateCurrentAirport(iataCode: String) {
         viewModelScope.launch {
-            airportRepository.getFlightByCode(iataCode = iataCode).filterNotNull()
+            airportRepository.getFlightByCode(iataCode = iataCode)
+                .collect { airport ->
+                    _uiState.update {
+                        it.copy(currentAirport = airport)
+                    }
+                }
+        }
+    }
+
+    fun updateAirportByDestination(iataCode: String) {
+        viewModelScope.launch {
+            airportRepository.getAllFlightsWithDestination(iataCode = iataCode)
                 .collect { airports ->
                     _uiState.update {
-                        it.copy(currentAirports = airports)
+                        it.copy(
+                            airportList = airports
+                        )
                     }
                 }
         }
@@ -94,7 +106,6 @@ class AirportViewModel(
 //                initialValue = AirportUiState()
 //            )
 
-
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
     }
@@ -103,5 +114,6 @@ class AirportViewModel(
 data class AirportUiState(
     val searchInput: String = "",
     val suggestedAirport: List<Airport> = emptyList(),
-    val currentAirports: List<Airport> = emptyList()
+    val airportList: List<Airport> = emptyList(),
+    val currentAirport: Airport? = null
 )
