@@ -6,5 +6,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface FavoriteRepository {
     fun getAllFavorites(): Flow<List<Favorite>>
-    suspend fun setFavoriteFlight(airport: Airport)
+    suspend fun setFavoriteFlight(favorite: Favorite)
 }
