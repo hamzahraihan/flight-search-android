@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface FavoriteDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun setFavoriteFlight(airport: Airport)
+    suspend fun setFavoriteFlight(favorite: Favorite)
 
     @Query(
         """
