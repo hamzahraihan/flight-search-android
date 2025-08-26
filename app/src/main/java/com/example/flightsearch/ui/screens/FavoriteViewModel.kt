@@ -20,6 +20,22 @@ class FavoriteViewModel(private val favoriteRepository: FavoriteRepository) : Vi
         getFavoriteFlights()
     }
 
+    fun isFavorite(departureCode: String, destinationCode: String): Boolean {
+        var checkFavorite: Boolean = false
+
+        viewModelScope.launch {
+            _uiState.collect { state ->
+                if (state.favoriteAirport.isNotEmpty()) {
+                    state.favoriteAirport.forEach { favorite ->
+                        checkFavorite =
+                            favorite.departureCode == departureCode && favorite.destinationCode == destinationCode
+                    }
+                }
+            }
+        }
+        return checkFavorite
+    }
+
     fun getFavoriteFlights() {
         viewModelScope.launch {
             favoriteRepository.getAllFavorites().collect { favorites ->
@@ -30,8 +46,8 @@ class FavoriteViewModel(private val favoriteRepository: FavoriteRepository) : Vi
         }
     }
 
-    suspend fun setFavoriteFligth(airport: Airport) {
-        favoriteRepository.setFavoriteFlight(airport = airport)
+    suspend fun setFavoriteFligth(favorite: Favorite) {
+        favoriteRepository.setFavoriteFlight(favorite = favorite)
     }
 }
 
