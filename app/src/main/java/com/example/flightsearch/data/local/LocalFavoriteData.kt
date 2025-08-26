@@ -9,6 +9,6 @@ import kotlinx.coroutines.flow.Flow
 class LocalFavoriteData(private val favoriteDao: FavoriteDao) : FavoriteRepository {
     override fun getAllFavorites(): Flow<List<Favorite>> = favoriteDao.getAllFavorites()
 
-    override suspend fun setFavoriteFlight(airport: Airport) =
-        favoriteDao.setFavoriteFlight(airport)
+    override suspend fun setFavoriteFlight(favorite: Favorite) =
+        favoriteDao.setFavoriteFlight(favorite = favorite)
 }
