@@ -1,5 +1,6 @@
 package com.example.flightsearch.ui.screens
 
+import android.util.Log
 import android.view.RoundedCorner
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -27,6 +28,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,6 +39,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.flightsearch.data.AppDataContainer
 import com.example.flightsearch.ui.AppViewModelProvider
 import com.example.flightsearch.ui.theme.FlightSearchTheme
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -46,6 +49,8 @@ fun HomeScreen(
     favoriteViewModel: FavoriteViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val airportUiState by airportViewModel.uiState.collectAsState()
+
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(topBar = {
         TopAppBar(
@@ -90,24 +95,45 @@ fun HomeScreen(
             }
 
             if (airportUiState.searchInput.isEmpty() && airportUiState.currentAirport == null) {
-                FavoriteScreen(viewModel = favoriteViewModel, modifier = Modifier.padding(12.dp))
+                FavoriteScreen(
+                    viewModel = favoriteViewModel,
+                    onClickFavorite = { favorite ->
+                        Log.d("FAVORITE ON CLICK ", favorite.toString())
+                        coroutineScope.launch {
+                            favoriteViewModel.setFavoriteFligth(
+                                favorite
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp)
+                )
             }
 
             if (airportUiState.currentAirport != null) {
-                AirportScreen(uiState = airportUiState, modifier = Modifier.fillMaxSize())
+                AirportScreen(
+                    uiState = airportUiState,
+                    isFavorite = { departureCode, destinationCode ->
+                        favoriteViewModel.isFavorite(departureCode, destinationCode)
+                    },
+                    onClickFavorite = { favorite ->
+                        Log.d("FAVORITE ON CLICK ", favorite.toString())
+                        coroutineScope.launch {
+                            favoriteViewModel.setFavoriteFligth(
+                                favorite
+                            )
+                        }
+                    },
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(12.dp)
+                )
             }
         }
     }
 }
 
-@Composable
-fun FlightLists(modifier: Modifier = Modifier) {
-    LazyColumn {
-        items(count = 2) {
-            Text(text = "Home Screen", modifier = Modifier.padding(20.dp))
-        }
-    }
-}
 
 @Preview
 @Composable
