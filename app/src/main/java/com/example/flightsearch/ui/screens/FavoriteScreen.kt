@@ -3,6 +3,8 @@ package com.example.flightsearch.ui.screens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
@@ -14,9 +16,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import com.example.flightsearch.model.Favorite
 
 @Composable
-fun FavoriteScreen(viewModel: FavoriteViewModel, modifier: Modifier = Modifier) {
+fun FavoriteScreen(
+    viewModel: FavoriteViewModel,
+    onClickFavorite: (Favorite) -> Unit,
+    modifier: Modifier = Modifier
+) {
     val uiState by viewModel.uiState.collectAsState()
 
     Column(modifier = modifier.fillMaxSize()) {
@@ -30,6 +37,14 @@ fun FavoriteScreen(viewModel: FavoriteViewModel, modifier: Modifier = Modifier) 
                 Icon(imageVector = Icons.Default.Star, contentDescription = null)
                 Text("You have no favorite flight", textAlign = TextAlign.Center)
             }
+        } else {
+            LazyColumn {
+                items(uiState.favoriteAirport) { favorite ->
+                    Text(favorite.departureCode)
+                    Text(favorite.destinationCode)
+                }
+            }
         }
     }
 }
+
