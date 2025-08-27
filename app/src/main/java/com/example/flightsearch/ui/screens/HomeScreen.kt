@@ -49,6 +49,7 @@ fun HomeScreen(
     favoriteViewModel: FavoriteViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val airportUiState by airportViewModel.uiState.collectAsState()
+    val favoriteUiState by favoriteViewModel.uiState.collectAsState()
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -72,8 +73,7 @@ fun HomeScreen(
                 },
                 leadingIcon = {
                     Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null
+                        imageVector = Icons.Default.Search, contentDescription = null
                     )
                 },
                 shape = RoundedCornerShape(50.dp),
@@ -89,8 +89,7 @@ fun HomeScreen(
 
             if (airportUiState.searchInput.isNotEmpty() && airportUiState.currentAirport == null) {
                 SearchResultScreen(
-                    viewModel = airportViewModel,
-                    modifier = Modifier.padding(vertical = 8.dp)
+                    viewModel = airportViewModel, modifier = Modifier.padding(vertical = 8.dp)
                 )
             }
 
@@ -104,8 +103,7 @@ fun HomeScreen(
                                 favorite
                             )
                         }
-                    },
-                    modifier = Modifier
+                    }, modifier = Modifier
                         .fillMaxSize()
                         .padding(12.dp)
                 )
@@ -115,7 +113,10 @@ fun HomeScreen(
                 AirportScreen(
                     uiState = airportUiState,
                     isFavorite = { departureCode, destinationCode ->
-                        favoriteViewModel.isFavorite(departureCode, destinationCode)
+                        favoriteViewModel.isFavorite(
+                            departureCode = departureCode,
+                            destinationCode = destinationCode
+                        )
                     },
                     onClickFavorite = { favorite ->
                         Log.d("FAVORITE ON CLICK ", favorite.toString())
@@ -123,6 +124,7 @@ fun HomeScreen(
                             favoriteViewModel.setFavoriteFligth(
                                 favorite
                             )
+                            airportViewModel.updateUserInput("")
                         }
                     },
                     modifier = Modifier
