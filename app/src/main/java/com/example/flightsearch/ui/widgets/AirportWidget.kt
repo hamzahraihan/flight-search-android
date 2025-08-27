@@ -108,9 +108,9 @@ fun AirportItem(
                 },
                 content = {
                     Icon(
-                        imageVector = if (isFavorite) Icons.Outlined.Star else Icons.Default.Star,
+                        imageVector = Icons.Default.Star,
                         contentDescription = null,
-                        tint = if (isFavorite) Color.Gray else Color.Yellow,
+                        tint = if (isFavorite) Color.Yellow else Color.Gray,
                         modifier = Modifier
                             .size(42.dp)
                     )
