@@ -6,12 +6,7 @@ import com.example.flightsearch.data.FavoriteRepository
 import com.example.flightsearch.model.Airport
 import com.example.flightsearch.model.Favorite
 import com.example.flightsearch.model.FavoriteWithAirports
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.WhileSubscribed
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -29,10 +24,9 @@ class FavoriteViewModel(private val favoriteRepository: FavoriteRepository) : Vi
         initialValue = FavoriteUiState()
     )
 
-    suspend fun isFavorite(departureCode: String, destinationCode: String): Boolean {
-        val favorites = favoriteRepository.getAllFavorites().first()
-        return favorites.any { favorite ->
-            favorite.departureCode == departureCode && favorite.destinationCode == destinationCode
+    fun isFavorite(departureCode: String, destinationCode: String): Boolean {
+        return uiState.value.favoriteAirport.any { favorites ->
+            favorites.departureAirport.iataCode == departureCode && favorites.destinationAirport.iataCode == destinationCode
         }
     }
 
@@ -41,6 +35,11 @@ class FavoriteViewModel(private val favoriteRepository: FavoriteRepository) : Vi
             favoriteRepository.exists(favorite.departureCode, favorite.destinationCode) > 0
         if (!exists) {
             addFavorite(favorite)
+        } else {
+            deleteFavorite(
+                departureCode = favorite.departureCode,
+                destinationCode = favorite.destinationCode
+            )
         }
     }
 
@@ -48,9 +47,10 @@ class FavoriteViewModel(private val favoriteRepository: FavoriteRepository) : Vi
         favoriteRepository.setFavoriteFlight(favorite)
     }
 
-    private fun deleteFavorite(favorite: Favorite) = viewModelScope.launch {
-        favoriteRepository.deleteFavoriteFlight(favorite)
-    }
+    private fun deleteFavorite(departureCode: String, destinationCode: String) =
+        viewModelScope.launch {
+            favoriteRepository.deleteFavoriteFlight(departureCode, destinationCode)
+        }
 }
 
 data class FavoriteUiState(
