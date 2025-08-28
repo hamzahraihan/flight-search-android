@@ -12,7 +12,7 @@ interface FavoriteRepository {
 
     suspend fun setFavoriteFlight(favorite: Favorite)
 
-    suspend fun deleteFavoriteFlight(favorite: Favorite)
+    suspend fun deleteFavoriteFlight(departureCode: String, destinationCode: String)
 
     suspend fun exists(departureCode: String, destinationCode: String): Int
 }
