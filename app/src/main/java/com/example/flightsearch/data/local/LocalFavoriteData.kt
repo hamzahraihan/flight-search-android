@@ -15,8 +15,8 @@ class LocalFavoriteData(private val favoriteDao: FavoriteDao) : FavoriteReposito
     override suspend fun setFavoriteFlight(favorite: Favorite) =
         favoriteDao.setFavoriteFlight(favorite = favorite)
 
-    override suspend fun deleteFavoriteFlight(favorite: Favorite) =
-        favoriteDao.deleteFavorite(favorite)
+    override suspend fun deleteFavoriteFlight(departureCode: String,destinationCode: String) =
+        favoriteDao.deleteFavorite(departureCode,destinationCode)
 
     override suspend fun exists(departureCode: String, destinationCode: String): Int =
         favoriteDao.exists(departureCode, destinationCode)
