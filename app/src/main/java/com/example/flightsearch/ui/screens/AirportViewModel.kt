@@ -37,15 +37,6 @@ class AirportViewModel(
         }
     }
 
-//    fun getAllFlights() {
-//        viewModelScope.launch {
-//            airportRepository.getAllFlights().collect { fligths ->
-//                _uiState.update { it.copy(airportList = fligths) }
-//            }
-//        }
-//    }
-
-
     fun updateUserInput(input: String) {
         if (input.isEmpty() || input == "") {
             _uiState.update { it.copy(currentAirport = null) }
@@ -96,15 +87,6 @@ class AirportViewModel(
                 }
         }
     }
-
-//    val airportAllFlights: StateFlow<AirportUiState> =
-//        airportRepository.getAllFlights()
-//            .map { AirportUiState(airportList = it) }
-//            .stateIn(
-//                scope = viewModelScope,
-//                started = SharingStarted.WhileSubscribed(TIMEOUT_MILLIS),
-//                initialValue = AirportUiState()
-//            )
 
     companion object {
         private const val TIMEOUT_MILLIS = 5_000L
