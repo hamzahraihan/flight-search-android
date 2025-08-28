@@ -95,11 +95,14 @@ fun HomeScreen(
 
             if (airportUiState.searchInput.isEmpty() && airportUiState.currentAirport == null) {
                 FavoriteScreen(
-                    viewModel = favoriteViewModel,
+                    uiState = favoriteUiState,
+                    isFavorite = { departureCode, destinationCode ->
+                        favoriteViewModel.isFavorite(departureCode, destinationCode)
+                    },
                     onClickFavorite = { favorite ->
                         Log.d("FAVORITE ON CLICK ", favorite.toString())
                         coroutineScope.launch {
-                            favoriteViewModel.setFavoriteFligth(
+                            favoriteViewModel.updateFavoriteFlight(
                                 favorite
                             )
                         }
@@ -113,15 +116,12 @@ fun HomeScreen(
                 AirportScreen(
                     uiState = airportUiState,
                     isFavorite = { departureCode, destinationCode ->
-                        favoriteViewModel.isFavorite(
-                            departureCode = departureCode,
-                            destinationCode = destinationCode
-                        )
+                        favoriteViewModel.isFavorite(departureCode, destinationCode)
                     },
                     onClickFavorite = { favorite ->
                         Log.d("FAVORITE ON CLICK ", favorite.toString())
                         coroutineScope.launch {
-                            favoriteViewModel.setFavoriteFligth(
+                            favoriteViewModel.updateFavoriteFlight(
                                 favorite
                             )
                             airportViewModel.updateUserInput("")
