@@ -10,22 +10,21 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.example.flightsearch.model.Favorite
+import com.example.flightsearch.ui.widgets.AirportItem
 
 @Composable
 fun FavoriteScreen(
-    viewModel: FavoriteViewModel,
+    uiState: FavoriteUiState,
+    isFavorite: (String, String) -> Boolean,
     onClickFavorite: (Favorite) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-
     Column(modifier = modifier.fillMaxSize()) {
         Text("Favorite Flights", fontWeight = FontWeight.Bold)
         if (uiState.favoriteAirport.isEmpty()) {
@@ -38,12 +37,30 @@ fun FavoriteScreen(
                 Text("You have no favorite flight", textAlign = TextAlign.Center)
             }
         } else {
-            LazyColumn {
-                items(uiState.favoriteAirport) { favorite ->
-                    Text(favorite.departureCode)
-                    Text(favorite.destinationCode)
-                }
-            }
+            FavoriteList(
+                uiState = uiState,
+                isFavorite = isFavorite,
+                onClickFavorite = onClickFavorite,
+            )
+        }
+    }
+}
+
+@Composable
+fun FavoriteList(
+    uiState: FavoriteUiState,
+    isFavorite: (String, String) -> Boolean,
+    onClickFavorite: (Favorite) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    LazyColumn(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        items(uiState.favoriteAirport) { favorite ->
+            AirportItem(
+                departureAirport = favorite.departureAirport,
+                destinationAirport = favorite.destinationAirport,
+                isFavorite = isFavorite,
+                onClickFavorite = onClickFavorite,
+            )
         }
     }
 }
