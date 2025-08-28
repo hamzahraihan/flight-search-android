@@ -28,38 +28,14 @@ import com.example.flightsearch.model.Airport
 import com.example.flightsearch.model.Favorite
 
 @Composable
-fun AirportList(
-    airportList: List<Airport>,
-    isFavorite: (String, String) -> Boolean,
-    currentAirport: Airport?,
-    onClickFavorite: (Favorite) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    LazyColumn(modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        items(airportList) { airport ->
-            AirportItem(
-                currentAirport = currentAirport!!,
-                isFavorite = isFavorite,
-                onClickFavorite = {
-                    onClickFavorite(it)
-                },
-                airport = airport,
-                modifier = Modifier.fillMaxWidth(),
-            )
-        }
-    }
-}
-
-
-@Composable
 fun AirportItem(
-    currentAirport: Airport,
+    departureAirport: Airport,
+    destinationAirport: Airport,
     isFavorite: (String, String) -> Boolean,
-    airport: Airport,
     onClickFavorite: (Favorite) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isFavorite = isFavorite(currentAirport.iataCode, airport.iataCode)
+    val isFavorite = isFavorite(departureAirport.iataCode, destinationAirport.iataCode)
 
     Card(modifier = modifier) {
         Row(
@@ -75,9 +51,9 @@ fun AirportItem(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(currentAirport.iataCode, fontWeight = FontWeight.Bold)
+                    Text(text = departureAirport.iataCode, fontWeight = FontWeight.Bold)
                     Text(
-                        currentAirport.name,
+                        text = departureAirport.name,
                         fontWeight = FontWeight.Light,
                         style = MaterialTheme.typography.titleSmall
                     )
@@ -89,9 +65,9 @@ fun AirportItem(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(airport.iataCode, fontWeight = FontWeight.Bold)
+                    Text(text = destinationAirport.iataCode, fontWeight = FontWeight.Bold)
                     Text(
-                        airport.name,
+                        text = destinationAirport.name,
                         fontWeight = FontWeight.Light,
                         style = MaterialTheme.typography.titleSmall
                     )
@@ -101,8 +77,8 @@ fun AirportItem(
                 onClick = {
                     onClickFavorite(
                         Favorite(
-                            departureCode = currentAirport.iataCode,
-                            destinationCode = airport.iataCode
+                            departureCode = departureAirport.iataCode,
+                            destinationCode = destinationAirport.iataCode
                         )
                     )
                 },
