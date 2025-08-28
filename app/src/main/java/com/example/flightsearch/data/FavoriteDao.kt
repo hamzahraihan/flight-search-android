@@ -24,8 +24,14 @@ interface FavoriteDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun setFavoriteFlight(favorite: Favorite)
 
-    @Delete
-    suspend fun deleteFavorite(favorite: Favorite)
+
+    // delete favorite flight by departure code and destination code using query instead of delete annotation
+    @Query(
+        """
+        DELETE FROM favorite WHERE departure_code = :departureCode AND destination_code = :destinationCode
+    """
+    )
+    suspend fun deleteFavorite(departureCode: String, destinationCode: String)
 
     @Query(
         """
@@ -36,7 +42,7 @@ interface FavoriteDao {
 
     @Query(
         """
-        SELECT COUNT(*) FROM favorite WHERE destination_code = :destinationCode AND departure_code = :departureCode
+        SELECT COUNT(*) FROM favorite WHERE departure_code = :departureCode AND destination_code = :destinationCode
     """
     )
     suspend fun exists(departureCode: String, destinationCode: String): Int
